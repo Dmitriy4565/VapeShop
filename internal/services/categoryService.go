@@ -1,12 +1,12 @@
-package services //во всех сервисах пройтись по бд и проверить, заменить
+package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 
-	// Импортируйте пакеты для работы с базой данных
-	"database/sql"
+	"github.com/your-project/internal/db"
 )
 
 // Category - структура, представляющая данные о категории
@@ -20,28 +20,28 @@ type Category struct {
 // CategoryService - интерфейс сервиса категорий
 type CategoryService interface {
 	// Методы для работы с категориями:
-	GetAllCategories() ([]Category, error)
-	GetCategoryByID(id string) (*Category, error)
-	CreateCategory(category Category) (*Category, error)
-	UpdateCategory(category Category) error
-	DeleteCategory(id string) error
+	GetAllCategories(ctx context.Context) ([]Category, error)
+	GetCategoryByID(ctx context.Context, id string) (*Category, error)
+	CreateCategory(ctx context.Context, category Category) (*Category, error)
+	UpdateCategory(ctx context.Context, category Category) error
+	DeleteCategory(ctx context.Context, id string) error
 }
 
 // CategoryServiceImpl - реализация сервиса категорий
 type CategoryServiceImpl struct {
-	db *sql.DB // Ссылка на объект базы данных
+	db *db.DB // Ссылка на объект базы данных
 }
 
 // NewCategoryService - конструктор сервиса категорий
-func NewCategoryService(db *sql.DB) *CategoryServiceImpl {
+func NewCategoryService(db *db.DB) *CategoryServiceImpl {
 	return &CategoryServiceImpl{
 		db: db,
 	}
 }
 
 // GetAllCategories - получение всех категорий
-func (s *CategoryServiceImpl) GetAllCategories() ([]Category, error) {
-	rows, err := s.db.QueryContext(context.Background(), "SELECT * FROM categories")
+func (s *CategoryServiceImpl) GetAllCategories(ctx context.Context) ([]Category, error) {
+	rows, err := s.db.QueryContext(ctx, "SELECT * FROM categories")
 	if err != nil {
 		return nil, err
 	}
@@ -60,9 +60,9 @@ func (s *CategoryServiceImpl) GetAllCategories() ([]Category, error) {
 }
 
 // GetCategoryByID - получение категории по ID
-func (s *CategoryServiceImpl) GetCategoryByID(id string) (*Category, error) {
+func (s *CategoryServiceImpl) GetCategoryByID(ctx context.Context, id string) (*Category, error) {
 	var category Category
-	err := s.db.QueryRowContext(context.Background(), "SELECT * FROM categories WHERE id = $1", id).Scan(&category.ID, &category.Name, &category.CreatedAt, &category.UpdatedAt)
+	err := s.db.QueryRowContext(ctx, "SELECT * FROM categories WHERE id = $1", id).Scan(&category.ID, &category.Name, &category.CreatedAt, &category.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New("категория не найдена")
@@ -73,8 +73,7 @@ func (s *CategoryServiceImpl) GetCategoryByID(id string) (*Category, error) {
 }
 
 // CreateCategory - создание новой категории
-func (s *CategoryServiceImpl) CreateCategory(category Category) (*Category, error) {
-	ctx := context.Background()
+func (s *CategoryServiceImpl) CreateCategory(ctx context.Context, category Category) (*Category, error) {
 	result, err := s.db.ExecContext(ctx, "INSERT INTO categories (name) VALUES ($1)", category.Name)
 	if err != nil {
 		return nil, err
@@ -89,15 +88,13 @@ func (s *CategoryServiceImpl) CreateCategory(category Category) (*Category, erro
 }
 
 // UpdateCategory - обновление категории
-func (s *CategoryServiceImpl) UpdateCategory(category Category) error {
-	ctx := context.Background()
+func (s *CategoryServiceImpl) UpdateCategory(ctx context.Context, category Category) error {
 	_, err := s.db.ExecContext(ctx, "UPDATE categories SET name = $1 WHERE id = $2", category.Name, category.ID)
 	return err
 }
 
 // DeleteCategory - удаление категории
-func (s *CategoryServiceImpl) DeleteCategory(id string) error {
-	ctx := context.Background()
+func (s *CategoryServiceImpl) DeleteCategory(ctx context.Context, id string) error {
 	_, err := s.db.ExecContext(ctx, "DELETE FROM categories WHERE id = $1", id)
 	return err
 }
