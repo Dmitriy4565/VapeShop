@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/your-project/internal/db"
+	"github.com/VapeShop/internal/db"
 )
 
 // Category - структура, представляющая данные о категории

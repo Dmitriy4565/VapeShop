@@ -8,8 +8,8 @@ import (
   "time"
 
   "github.com/gin-gonic/gin" // Используем Gin для HTTP-обработки
-  "github.com/your-project/internal/db"
-  "github.com/your-project/internal/services"
+  "github.com/VapeShop/internal/db"
+  "github.com/VapeShop/internal/services"
 )
 
 // Server структура, описывающая сервер

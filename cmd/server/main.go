@@ -10,8 +10,8 @@ import (
  "syscall"
  "time"
 
- "github.com/your-project/cmd/server"
- "github.com/your-project/internal/db"
+ "github.com/VapeShop/cmd/server"
+ "github.com/VapeShop/internal/db"
 )
 
 func main() {
