@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// Product структура, описывающая продукт
 type Product struct {
 	ID             int       `json:"id" db:"id"`
 	Name           string    `json:"name" db:"name"`
@@ -17,7 +16,6 @@ type Product struct {
 	UpdatedAt      time.Time `json:"updated_at" db:"updated_at"`
 }
 
-// NewProduct - конструктор продукта
 func NewProduct(name, description string, price float64, imageURL string, categoryID, manufacturerID int) *Product {
 	return &Product{
 		Name:           name,
@@ -31,7 +29,6 @@ func NewProduct(name, description string, price float64, imageURL string, catego
 	}
 }
 
-// Update - обновление данных продукта
 func (p *Product) Update(name, description string, price float64, imageURL string, categoryID, manufacturerID int) {
 	p.Name = name
 	p.Description = description

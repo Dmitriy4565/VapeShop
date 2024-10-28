@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// Purchase структура, описывающая покупку
 type Purchase struct {
 	ID         int       `json:"id" db:"id"`
 	CustomerID int       `json:"customer_id" db:"customer_id"`
@@ -17,7 +16,6 @@ type Purchase struct {
 	UpdatedAt  time.Time `json:"updated_at" db:"updated_at"`
 }
 
-// NewPurchase - конструктор покупки
 func NewPurchase(customerID, productID, quantity int, totalPrice float64, deliveryID, status string) *Purchase {
 	return &Purchase{
 		CustomerID: customerID,
@@ -31,7 +29,6 @@ func NewPurchase(customerID, productID, quantity int, totalPrice float64, delive
 	}
 }
 
-// Update - обновление данных покупки
 func (p *Purchase) Update(customerID, productID, quantity int, totalPrice float64, deliveryID, status string) {
 	p.CustomerID = customerID
 	p.ProductID = productID

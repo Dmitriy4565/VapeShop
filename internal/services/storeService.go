@@ -5,11 +5,9 @@ import (
 	"errors"
 	"time"
 
-	// Импортируйте пакеты для работы с базой данных
 	"database/sql"
 )
 
-// Store - структура, представляющая данные о магазине
 type Store struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -18,9 +16,7 @@ type Store struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// StoreService - интерфейс сервиса магазинов
 type StoreService interface {
-	// Методы для работы с магазинами:
 	GetAllStores() ([]Store, error)
 	GetStoreByID(id string) (*Store, error)
 	CreateStore(store Store) (*Store, error)
@@ -28,19 +24,16 @@ type StoreService interface {
 	DeleteStore(id string) error
 }
 
-// StoreServiceImpl - реализация сервиса магазинов
 type StoreServiceImpl struct {
 	db *sql.DB // Ссылка на объект базы данных
 }
 
-// NewStoreService - конструктор сервиса магазинов
 func NewStoreService(db *sql.DB) *StoreServiceImpl {
 	return &StoreServiceImpl{
 		db: db,
 	}
 }
 
-// GetAllStores - получение всех магазинов
 func (s *StoreServiceImpl) GetAllStores() ([]Store, error) {
 	rows, err := s.db.QueryContext(context.Background(), "SELECT * FROM stores")
 	if err != nil {
@@ -60,7 +53,6 @@ func (s *StoreServiceImpl) GetAllStores() ([]Store, error) {
 	return stores, nil
 }
 
-// GetStoreByID - получение магазина по ID
 func (s *StoreServiceImpl) GetStoreByID(id string) (*Store, error) {
 	var store Store
 	err := s.db.QueryRowContext(context.Background(), "SELECT * FROM stores WHERE id = $1", id).Scan(&store.ID, &store.Name, &store.Address, &store.CreatedAt, &store.UpdatedAt)
@@ -73,7 +65,6 @@ func (s *StoreServiceImpl) GetStoreByID(id string) (*Store, error) {
 	return &store, nil
 }
 
-// CreateStore - создание нового магазина
 func (s *StoreServiceImpl) CreateStore(store Store) (*Store, error) {
 	ctx := context.Background()
 	result, err := s.db.ExecContext(ctx, "INSERT INTO stores (name, address) VALUES ($1, $2)", store.Name, store.Address)
@@ -89,14 +80,12 @@ func (s *StoreServiceImpl) CreateStore(store Store) (*Store, error) {
 	return &store, nil
 }
 
-// UpdateStore - обновление магазина
 func (s *StoreServiceImpl) UpdateStore(store Store) error {
 	ctx := context.Background()
 	_, err := s.db.ExecContext(ctx, "UPDATE stores SET name = $1, address = $2 WHERE id = $3", store.Name, store.Address, store.ID)
 	return err
 }
 
-// DeleteStore - удаление магазина
 func (s *StoreServiceImpl) DeleteStore(id string) error {
 	ctx := context.Background()
 	_, err := s.db.ExecContext(ctx, "DELETE FROM stores WHERE id = $1", id)

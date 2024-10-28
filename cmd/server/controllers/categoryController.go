@@ -4,17 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Dmitriy4565/VapeShop/internal/services/categoryService"
 	"github.com/go-playground/validator/v10"
-	"github.com/services/categoryService"
 )
 
-// CategoryController - контроллер для обработки запросов к категориям
 type CategoryController struct {
 	categoryService *categoryService.CategoryService
 	validate        *validator.Validate
 }
 
-// NewCategoryController - конструктор контроллера
 func NewCategoryController(categoryService *categoryService.CategoryService) *CategoryController {
 	return &CategoryController{
 		categoryService: categoryService,
@@ -22,7 +20,6 @@ func NewCategoryController(categoryService *categoryService.CategoryService) *Ca
 	}
 }
 
-// GetCategoriesHandler - обработчик запроса на получение всех категорий
 func (c *CategoryController) GetCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	categories, err := c.categoryService.GetAllCategories()
 	if err != nil {
@@ -33,7 +30,6 @@ func (c *CategoryController) GetCategoriesHandler(w http.ResponseWriter, r *http
 	json.NewEncoder(w).Encode(categories)
 }
 
-// CreateCategoryHandler - обработчик запроса на создание новой категории
 func (c *CategoryController) CreateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	var category categoryService.Category
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -42,7 +38,6 @@ func (c *CategoryController) CreateCategoryHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -58,7 +53,6 @@ func (c *CategoryController) CreateCategoryHandler(w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(newCategory)
 }
 
-// UpdateCategoryHandler - обработчик запроса на обновление категории
 func (c *CategoryController) UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	var category categoryService.Category
 	err := json.NewDecoder(r.Body).Decode(&category)
@@ -67,7 +61,6 @@ func (c *CategoryController) UpdateCategoryHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(category)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -83,7 +76,6 @@ func (c *CategoryController) UpdateCategoryHandler(w http.ResponseWriter, r *htt
 	w.WriteHeader(http.StatusOK)
 }
 
-// DeleteCategoryHandler - обработчик запроса на удаление категории
 func (c *CategoryController) DeleteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {

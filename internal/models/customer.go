@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// Customer представляет структуру для хранения информации о покупателе.
 type Customer struct {
 	ID        int       `json:"id"`         // Уникальный идентификатор покупателя
 	FirstName string    `json:"first_name"` // Имя покупателя
@@ -16,7 +15,6 @@ type Customer struct {
 	UpdatedAt time.Time `json:"updated_at"` // Время последнего обновления профиля покупателя
 }
 
-// NewCustomer создает нового покупателя с текущей датой создания и обновления.
 func NewCustomer(firstName, lastName, email, phone, address string) *Customer {
 	return &Customer{
 		FirstName: firstName,
@@ -29,7 +27,6 @@ func NewCustomer(firstName, lastName, email, phone, address string) *Customer {
 	}
 }
 
-// Update обновляет информацию о покупателе и устанавливает новое время обновления.
 func (c *Customer) Update(firstName, lastName, email, phone, address string) {
 	c.FirstName = firstName
 	c.LastName = lastName

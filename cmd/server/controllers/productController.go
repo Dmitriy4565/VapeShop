@@ -4,17 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Dmitriy4565/VapeShop/internal/services/productService"
 	"github.com/go-playground/validator/v10"
-	"github.com/services/productService"
 )
 
-// ProductController - контроллер для обработки запросов к продуктам
 type ProductController struct {
 	productService *productService.ProductService
 	validate       *validator.Validate
 }
 
-// NewProductController - конструктор контроллера
 func NewProductController(productService *productService.ProductService) *ProductController {
 	return &ProductController{
 		productService: productService,
@@ -22,7 +20,6 @@ func NewProductController(productService *productService.ProductService) *Produc
 	}
 }
 
-// GetProductsHandler - обработчик запроса на получение всех продуктов
 func (c *ProductController) GetProductsHandler(w http.ResponseWriter, r *http.Request) {
 	products, err := c.productService.GetAllProducts()
 	if err != nil {
@@ -33,7 +30,6 @@ func (c *ProductController) GetProductsHandler(w http.ResponseWriter, r *http.Re
 	json.NewEncoder(w).Encode(products)
 }
 
-// GetProductByIDHandler - обработчик запроса на получение продукта по ID
 func (c *ProductController) GetProductByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
@@ -50,7 +46,6 @@ func (c *ProductController) GetProductByIDHandler(w http.ResponseWriter, r *http
 	json.NewEncoder(w).Encode(product)
 }
 
-// CreateProductHandler - обработчик запроса на создание нового продукта
 func (c *ProductController) CreateProductHandler(w http.ResponseWriter, r *http.Request) {
 	var product productService.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
@@ -59,7 +54,6 @@ func (c *ProductController) CreateProductHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -75,7 +69,6 @@ func (c *ProductController) CreateProductHandler(w http.ResponseWriter, r *http.
 	json.NewEncoder(w).Encode(newProduct)
 }
 
-// UpdateProductHandler - обработчик запроса на обновление продукта
 func (c *ProductController) UpdateProductHandler(w http.ResponseWriter, r *http.Request) {
 	var product productService.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
@@ -84,7 +77,6 @@ func (c *ProductController) UpdateProductHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(product)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -100,7 +92,6 @@ func (c *ProductController) UpdateProductHandler(w http.ResponseWriter, r *http.
 	w.WriteHeader(http.StatusOK)
 }
 
-// DeleteProductHandler - обработчик запроса на удаление продукта
 func (c *ProductController) DeleteProductHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {

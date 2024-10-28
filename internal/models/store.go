@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-// Store структура, описывающая магазин
 type Store struct {
 	ID        int       `json:"id" db:"id"`
 	Name      string    `json:"name" db:"name"`
@@ -14,7 +13,6 @@ type Store struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
-// NewStore - конструктор магазина
 func NewStore(name, address, phone string) *Store {
 	return &Store{
 		Name:      name,
@@ -25,7 +23,6 @@ func NewStore(name, address, phone string) *Store {
 	}
 }
 
-// Update - обновление данных магазина
 func (s *Store) Update(name, address, phone string) {
 	s.Name = name
 	s.Address = address

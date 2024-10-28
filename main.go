@@ -1,65 +1,49 @@
-package server
+package main
 
 import (
-  "context"
-  "fmt"
-  "log"
-  "net/http"
-  "time"
+	"net/http"
 
-  "github.com/gin-gonic/gin" // Используем Gin для HTTP-обработки
-  "github.com/VapeShop/internal/db"
-  "github.com/VapeShop/internal/services"
+	"github.com/Dmitriy4565/VapeShop/internal/db"
+	"github.com/Dmitriy4565/VapeShop/internal/services"
+	"github.com/gin-gonic/gin" // Используем Gin для HTTP-обработки
 )
 
-// Server структура, описывающая сервер
 type Server struct {
-  router     *gin.Engine
-  categoryService services.CategoryService
+	router          *gin.Engine
+	categoryService services.CategoryService
 }
 
-// NewServer - конструктор сервера
 func NewServer(db *db.DB) *Server {
-  // Инициализация Gin
-  router := gin.Default()
+	router := gin.Default()
 
-  // Инициализация сервиса (CategoryService)
-  categoryService := services.NewCategoryService(db)
+	categoryService := services.NewCategoryService(db)
 
-  // Создание контроллера 
-  categoryController := NewCategoryController(categoryService)
+	categoryController := NewCategoryController(categoryService)
 
-  // Регистрация маршрутов (пример)
-  router.GET("/categories", categoryController.GetCategoriesHandler)
-  // ... другие маршруты ...
+	router.GET("/categories", categoryController.GetCategoriesHandler)
 
-  return &Server{
-    router:     router,
-    categoryService: categoryService,
-  }
+	return &Server{
+		router:          router,
+		categoryService: categoryService,
+	}
 }
 
-// Run - запуск сервера
 func (s *Server) Run(addr string) error {
-  // Запуск сервера
-  return http.ListenAndServe(addr, s.router)
+	return http.ListenAndServe(addr, s.router)
 }
 
-// NewCategoryController - конструктор контроллера
 func NewCategoryController(categoryService services.CategoryService) *CategoryController {
-  return &CategoryController{
-    categoryService: categoryService,
-  }
+	return &CategoryController{
+		categoryService: categoryService,
+	}
 }
 
-// GetCategoriesHandler - обработчик запроса на получение всех категорий (пример)
 func (c *CategoryController) GetCategoriesHandler(ctx *gin.Context) {
-  categories, err := c.categoryService.GetAllCategories(ctx)
-  if err != nil {
-    ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-    return
-  }
-  ctx.JSON(http.StatusOK, categories)
+	categories, err := c.categoryService.GetAllCategories(ctx)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, categories)
 }
 
-// ... другие контроллеры ...

@@ -4,17 +4,15 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Dmitriy4565/VapeShop/internal/services/purchaseService"
 	"github.com/go-playground/validator/v10"
-	"github.com/services/purchaseService"
 )
 
-// PurchaseController - контроллер для обработки запросов к покупкам
 type PurchaseController struct {
 	purchaseService *purchaseService.PurchaseService
 	validate        *validator.Validate
 }
 
-// NewPurchaseController - конструктор контроллера
 func NewPurchaseController(purchaseService *purchaseService.PurchaseService) *PurchaseController {
 	return &PurchaseController{
 		purchaseService: purchaseService,
@@ -22,7 +20,6 @@ func NewPurchaseController(purchaseService *purchaseService.PurchaseService) *Pu
 	}
 }
 
-// GetPurchasesHandler - обработчик запроса на получение всех покупок
 func (c *PurchaseController) GetPurchasesHandler(w http.ResponseWriter, r *http.Request) {
 	purchases, err := c.purchaseService.GetAllPurchases()
 	if err != nil {
@@ -33,7 +30,6 @@ func (c *PurchaseController) GetPurchasesHandler(w http.ResponseWriter, r *http.
 	json.NewEncoder(w).Encode(purchases)
 }
 
-// GetPurchaseByIDHandler - обработчик запроса на получение покупки по ID
 func (c *PurchaseController) GetPurchaseByIDHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
@@ -50,7 +46,6 @@ func (c *PurchaseController) GetPurchaseByIDHandler(w http.ResponseWriter, r *ht
 	json.NewEncoder(w).Encode(purchase)
 }
 
-// CreatePurchaseHandler - обработчик запроса на создание новой покупки
 func (c *PurchaseController) CreatePurchaseHandler(w http.ResponseWriter, r *http.Request) {
 	var purchase purchaseService.Purchase
 	err := json.NewDecoder(r.Body).Decode(&purchase)
@@ -59,7 +54,6 @@ func (c *PurchaseController) CreatePurchaseHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(purchase)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -75,7 +69,6 @@ func (c *PurchaseController) CreatePurchaseHandler(w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(newPurchase)
 }
 
-// UpdatePurchaseHandler - обработчик запроса на обновление покупки
 func (c *PurchaseController) UpdatePurchaseHandler(w http.ResponseWriter, r *http.Request) {
 	var purchase purchaseService.Purchase
 	err := json.NewDecoder(r.Body).Decode(&purchase)
@@ -84,7 +77,6 @@ func (c *PurchaseController) UpdatePurchaseHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	// Валидация данных
 	err = c.validate.Struct(purchase)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -100,7 +92,6 @@ func (c *PurchaseController) UpdatePurchaseHandler(w http.ResponseWriter, r *htt
 	w.WriteHeader(http.StatusOK)
 }
 
-// DeletePurchaseHandler - обработчик запроса на удаление покупки
 func (c *PurchaseController) DeletePurchaseHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {

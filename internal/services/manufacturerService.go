@@ -5,11 +5,9 @@ import (
 	"errors"
 	"time"
 
-	// Импортируйте пакеты для работы с базой данных
 	"database/sql"
 )
 
-// Manufacturer - структура, представляющая данные о производителе
 type Manufacturer struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
@@ -18,9 +16,7 @@ type Manufacturer struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// ManufacturerService - интерфейс сервиса производителей
 type ManufacturerService interface {
-	// Методы для работы с производителями:
 	GetAllManufacturers() ([]Manufacturer, error)
 	GetManufacturerByID(id string) (*Manufacturer, error)
 	CreateManufacturer(manufacturer Manufacturer) (*Manufacturer, error)
@@ -28,19 +24,16 @@ type ManufacturerService interface {
 	DeleteManufacturer(id string) error
 }
 
-// ManufacturerServiceImpl - реализация сервиса производителей
 type ManufacturerServiceImpl struct {
 	db *sql.DB // Ссылка на объект базы данных
 }
 
-// NewManufacturerService - конструктор сервиса производителей
 func NewManufacturerService(db *sql.DB) *ManufacturerServiceImpl {
 	return &ManufacturerServiceImpl{
 		db: db,
 	}
 }
 
-// GetAllManufacturers - получение всех производителей
 func (s *ManufacturerServiceImpl) GetAllManufacturers() ([]Manufacturer, error) {
 	rows, err := s.db.QueryContext(context.Background(), "SELECT * FROM manufacturers")
 	if err != nil {
@@ -60,7 +53,6 @@ func (s *ManufacturerServiceImpl) GetAllManufacturers() ([]Manufacturer, error) 
 	return manufacturers, nil
 }
 
-// GetManufacturerByID - получение производителя по ID
 func (s *ManufacturerServiceImpl) GetManufacturerByID(id string) (*Manufacturer, error) {
 	var manufacturer Manufacturer
 	err := s.db.QueryRowContext(context.Background(), "SELECT * FROM manufacturers WHERE id = $1", id).Scan(&manufacturer.ID, &manufacturer.Name, &manufacturer.Country, &manufacturer.CreatedAt, &manufacturer.UpdatedAt)
@@ -73,7 +65,6 @@ func (s *ManufacturerServiceImpl) GetManufacturerByID(id string) (*Manufacturer,
 	return &manufacturer, nil
 }
 
-// CreateManufacturer - создание нового производителя
 func (s *ManufacturerServiceImpl) CreateManufacturer(manufacturer Manufacturer) (*Manufacturer, error) {
 	ctx := context.Background()
 	result, err := s.db.ExecContext(ctx, "INSERT INTO manufacturers (name, country) VALUES ($1, $2)", manufacturer.Name, manufacturer.Country)
@@ -89,14 +80,12 @@ func (s *ManufacturerServiceImpl) CreateManufacturer(manufacturer Manufacturer) 
 	return &manufacturer, nil
 }
 
-// UpdateManufacturer - обновление производителя
 func (s *ManufacturerServiceImpl) UpdateManufacturer(manufacturer Manufacturer) error {
 	ctx := context.Background()
 	_, err := s.db.ExecContext(ctx, "UPDATE manufacturers SET name = $1, country = $2 WHERE id = $3", manufacturer.Name, manufacturer.Country, manufacturer.ID)
 	return err
 }
 
-// DeleteManufacturer - удаление производителя
 func (s *ManufacturerServiceImpl) DeleteManufacturer(id string) error {
 	ctx := context.Background()
 	_, err := s.db.ExecContext(ctx, "DELETE FROM manufacturers WHERE id = $1", id)
