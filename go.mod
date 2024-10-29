@@ -1,6 +1,6 @@
 module github.com/Dmitriy4565/VapeShop
 
-go 1.18
+go 1.20
 
 require (
 	github.com/lib/pq v1.10.9
@@ -11,7 +11,6 @@ require (
  	github.com/Dmitriy4565/VapeShop/internal/services/productService  v1.1.0
  	github.com/Dmitriy4565/VapeShop/internal/services/purchaseService v1.1.0
  	github.com/Dmitriy4565/VapeShop/internal/services/storeService  v1.1.0
- 	github.com/Dmitriy4565/VapeShop/cmd/server v1.1.0
 	github.com/gin-gonic/gin v1.10.0
 )
 
@@ -44,4 +43,8 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace (
+	github.com/Dmitriy4565/VapeShop/cmd/server => ./cmd/server
 )
